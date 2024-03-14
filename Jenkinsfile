@@ -1,15 +1,32 @@
-name: Build C++ Project (Optional Testing Removed)
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-jobs:
-  build:	
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config Release
+pipeline {
+  agent any
+  stages {
+    // stage('Clone repository') {
+    //   steps {
+    //     checkout([$class:'GitSCM',
+    //     branches: [[name: '*/main']],
+    //   }
+    // }
+  stage('Build') {
+    steps {
+      build 'PES2UG21CS400-1'
+      sh 'g++ pipeline.cpp -o output'
+    }
+  }
+  stage('Test') {
+    steps {
+      sh './output'
+    }
+  }
+  stage('Deploy') {
+    steps {
+      echo 'deploy'
+    }
+  }
+  }
+  post{
+    failure{
+      error 'Pipeline failed'
+    }
+  }
+}
